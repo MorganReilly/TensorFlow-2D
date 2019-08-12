@@ -52,7 +52,14 @@ function createModel() {
     // Create a sequential model
     const model = tf.sequential();
 
-    // Add a single hidden layer
+    /** 
+     * Add a single hidden layer
+     * Where:
+     * dense -- layer type that multiplies its inputs by a matrix,
+     *          then adds a number (bias) to the result. 
+     * inputShape -- horsepower of given car.
+     * units -- sets how big the weight matrix will be in the layer.
+    */
     model.add(tf.layers.dense({ inputShape: [1], units: 1, useBias: true }));
 
     // Add an output layer
@@ -60,3 +67,10 @@ function createModel() {
 
     return model;
 }
+
+/**
+ * Creating an instance of the model 
+ * and show summary of layers on webpage
+ */
+const model = createModel();
+tfvis.show.modelSummary({ name: 'Model Summary' }, model);
