@@ -40,7 +40,13 @@ async function run() {
         }
     );
 
-    // More code will be added below
+    // Convert the data to a form we can use for training.
+    const tensorData = convertToTensor(data);
+    const { inputs, labels } = tensorData;
+
+    // Train the model  
+    await trainModel(model, inputs, labels);
+    console.log('Done Training');
 }
 
 document.addEventListener('DOMContentLoaded', run);
@@ -129,5 +135,45 @@ function convertToTensor(data) {
             labelMax,
             labelMin,
         }
+    });
+}
+
+/**
+ * Starting training process
+ */
+async function trainModel(model, inputs, labels) {
+    /**
+     * Prepare the model for training.
+     * optimizer: algorithm that is going to govern the updates to the model as it sees examples
+     * loss: funciton that will tell the model how well it is doing on learning
+     *       each of the batches (subsets) that is shown
+    */
+    model.compile({
+        optimizer: tf.train.adam(),
+        loss: tf.losses.meanSquaredError,
+        metrics: ['mse'],
+    });
+
+    /**
+     * batchSize: size of the data subsets that the model will see on each iteration of training.
+     *            ranges generally 32 - 512
+     * epochs: number of times model is going to look at the entire dataset provided. 
+     *         50 iterations in this case.
+     */
+    const batchSize = 32;
+    const epochs = 50;
+
+    /**
+     * Function to call to start the training loop.
+     */
+    return await model.fit(inputs, labels, {
+        batchSize,
+        epochs,
+        shuffle: true,
+        callbacks: tfvis.show.fitCallbacks(
+            { name: 'Training Performance' },
+            ['loss', 'mse'],
+            { height: 200, callbacks: ['onEpochEnd'] }
+        )
     });
 }
