@@ -77,7 +77,18 @@ function createModel() {
      * inputShape -- horsepower of given car.
      * units -- sets how big the weight matrix will be in the layer.
     */
-    model.add(tf.layers.dense({ inputShape: [1], units: 1, useBias: true }));
+    model.add(tf.layers.dense({ inputShape: [1], units: 125, useBias: true }));
+
+    /**
+     * Adding multiple hidden layers
+     */
+    model.add(tf.layers.dense({ units: 100, activation: 'sigmoid' }));
+
+    model.add(tf.layers.dense({ units: 75, activation: 'sigmoid' }));
+
+    model.add(tf.layers.dense({ units: 50, activation: 'sigmoid' }));
+
+    model.add(tf.layers.dense({ units: 25, activation: 'sigmoid' }));
 
     // Add an output layer
     model.add(tf.layers.dense({ units: 1, useBias: true }));
@@ -162,9 +173,8 @@ async function trainModel(model, inputs, labels) {
      * batchSize: size of the data subsets that the model will see on each iteration of training.
      *            ranges generally 32 - 512
      * epochs: number of times model is going to look at the entire dataset provided. 
-     *         50 iterations in this case.
      */
-    const batchSize = 32;
+    const batchSize = 64;
     const epochs = 50;
 
     /**
